@@ -1,0 +1,35 @@
+{
+  "name": "lex-hook",
+  "version": "0.0.1",
+  "description": "A library to help you create AWS Lambda Lex Code-Hook functions",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "keywords": ["AWS", "Lex", "Lambda"],
+  "scripts": {
+    "compile": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "tslint -p ./",
+    "test": "jest --config jest.config.json",
+    "prepare" : "npm run compile",
+    "prepublishOnly" : "npm test && npm run lint",
+    "preversion" : "npm run lint"
+  },
+  "author": "j2informatics",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "dependencies": {
+    "aws-lambda": "^1.0.6"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.57",
+    "@types/jest": "^26.0.3",
+    "jest": "^26.1.0",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.1",
+    "tslint": "^6.1.2",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.9.6"
+  }
+}

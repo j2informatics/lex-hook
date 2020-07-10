@@ -1,0 +1,5 @@
+node_modules
+lib
+examples/node_modules/
+examples/dist/
+examples/lib/
