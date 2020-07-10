@@ -5,20 +5,23 @@ import {
   LexDialogActionClose,
   LexDialogActionDelegate,
   LexDialogActionElicitSlot,
-  LexSlotResolution,
+  LexSlotResolution
 } from 'aws-lambda';
+
 
 /**
  * Extend some of the AWS-defined types
  */
 export namespace Ext {
+
   export interface LexEvent extends AWSLexEvent {
     recentIntentSummaryView: IntentSummary[];
   }
-
+  
   export interface LexResult extends AWSLexResult {
     recentIntentSummaryView?: IntentSummary[];
   }
+
 }
 
 export interface IntentSummary {
@@ -30,11 +33,14 @@ export interface IntentSummary {
   fulfillmentState: 'Fulfilled' | 'Failed';
   slotToElicit: string;
 }
+  
+
 
 export interface ResponseMessage {
   contentType: 'PlainText' | 'SSML' | 'CustomPayload';
   content: string;
 }
+
 
 /**
  * Each LexEvent is specific to either Dialog or Fulfillment.  The route function evalutes invocation source
@@ -44,11 +50,8 @@ export interface ResponseMessage {
  * @param ctx
  * @param eventHandler
  */
-export const route = async (
-  lexEvent: Ext.LexEvent,
-  ctx: Context,
-  eventHandler: LexEventHandler,
-): Promise<Ext.LexResult> => {
+export const route = async (lexEvent: Ext.LexEvent, ctx: Context, eventHandler: LexEventHandler)
+: Promise<Ext.LexResult> => {
   console.info('::route(:LexEvent, ..)..');
   console.log(JSON.stringify(lexEvent));
 
@@ -73,7 +76,7 @@ export const route = async (
           contentType: 'PlainText',
           content: 'Unxpected error occurred',
         },
-        sessionAttributes: lexEvent.sessionAttributes,
+        sessionAttributes: lexEvent.sessionAttributes
       }),
     );
   }
@@ -94,6 +97,8 @@ export interface LexEventHandler {
   fulfill: EventHandler;
 }
 
+
+
 /**
  * Every mesage from Lex is handled by an implementation of this Interface
  */
@@ -101,20 +106,18 @@ export interface EventHandler {
   handle: (lexEvent: Ext.LexEvent) => Promise<Ext.LexResult>;
 }
 
+
 export interface DialogEventHandlerConfig {
   /**
    * List of SlotValidators ... one for each Slot
    */
   slotEvaluatorArray: SlotEvaluator[];
   /**
-   * an optional hook function invoked after a Slot is evaluated.  The function is invoked whether the Slot
+   * an optional hook function invoked after a Slot is evaluated.  The function is invoked whether the Slot 
    * value is valid or not.
    */
-  slotEvaluationHook?: (
-    lexEvent: Ext.LexEvent,
-    slotEvaluator: SlotEvaluator,
-    slotEvalResult: SlotEvaluationResult,
-  ) => void;
+  slotEvaluationHook?: (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator, 
+    slotEvalResult: SlotEvaluationResult) => void;
   /**
    * optional hook function invoked when all Slot values are valid.
    */
@@ -123,17 +126,15 @@ export interface DialogEventHandlerConfig {
    * An optional function.  If specified, will be used to generate an appropriate Lex result when an invalid
    * Slot value is found.
    */
-  invalidSlotResponder?: (
-    lexEvent: Ext.LexEvent,
-    slotEvaluator: SlotEvaluator,
-    slotEvalResult: SlotEvaluationResult,
-  ) => Ext.LexResult;
+  invalidSlotResponder?: (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator, 
+    slotEvalResult: SlotEvaluationResult) => Ext.LexResult;
   /**
    * An optional function.  If specified, will be used to generate an appropriate Lex result when all Slot values
    * are assessed as valid.
    */
   allSlotsValidResponder?: (lexEvent: Ext.LexEvent) => Ext.LexResult;
 }
+
 
 /**
  * A specific implementation of an EventHandler dedicated to Dialog handling.
@@ -161,54 +162,57 @@ export class DefaultDialogEventHandler implements EventHandler {
   protected slotNameArray: string[] = [];
 
   protected config: DialogEventHandlerConfig;
+  
 
   /**
    * By default, ElicitSlot with a prompt message when an invalid slot is encountered.
-   *
-   * @param lexEvent
-   * @param slotEvaluator
-   * @param slotEvalResult
+   *  
+   * @param lexEvent 
+   * @param slotEvaluator 
+   * @param slotEvalResult 
    */
-  protected defaultInvalidSlotResponder = (
-    lexEvent: Ext.LexEvent,
-    slotEvaluator: SlotEvaluator,
-    slotEvalResult: SlotEvaluationResult,
-  ): Ext.LexResult => {
+  protected defaultInvalidSlotResponder = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator, 
+    slotEvalResult: SlotEvaluationResult): Ext.LexResult => {
     return LexResultFactory.dialogActionElicitSlot({
       intentName: lexEvent.currentIntent.name,
       slotToElicit: slotEvaluator.slotName,
       slots: lexEvent.currentIntent.slots,
       message: { content: slotEvaluator.promptMessage, contentType: 'PlainText' },
-      sessionAttributes: lexEvent.sessionAttributes,
+      sessionAttributes: lexEvent.sessionAttributes
     });
-  };
+  }
+
 
   /**
    * Delegate by default.
-   *
-   * @param lexEvent
+   * 
+   * @param lexEvent 
    */
-  protected defaultAllSlotsValidResponder = (lexEvent: Ext.LexEvent): Ext.LexResult => {
+  protected defaultAllSlotsValidResponder = (lexEvent: Ext.LexEvent): Ext.LexResult =>{
     return LexResultFactory.dialogActionDelegate({
       slots: lexEvent.currentIntent.slots,
-      sessionAttributes: lexEvent.sessionAttributes,
-    });
-  };
-
-  constructor(config: DialogEventHandlerConfig) {
-    //
-    // just reading this config
-    this.config = config;
-    //
-    // use provided List (Array) of SlotValidators to
-    // create a Mapping of those Evaluators to their corresponding
-    // Slot noames.
-    this.slotEvaluatorMap = {};
-    this.config.slotEvaluatorArray.forEach((se) => {
-      this.slotEvaluatorMap[se.slotName] = se;
-      this.slotNameArray.push(se.slotName);
+      sessionAttributes: lexEvent.sessionAttributes
     });
   }
+
+
+  constructor(config: DialogEventHandlerConfig) {
+        //
+        // just reading this config
+        this.config = config;
+        //
+        // use provided List (Array) of SlotValidators to 
+        // create a Mapping of those Evaluators to their corresponding
+        // Slot noames.
+        this.slotEvaluatorMap = {};
+        this.config.slotEvaluatorArray.forEach((se) => {
+          this.slotEvaluatorMap[se.slotName] = se;
+          this.slotNameArray.push(se.slotName);
+        }
+    );
+
+  }
+
 
   public handle(lexEvent: Ext.LexEvent): Promise<Ext.LexResult> {
     //
@@ -220,29 +224,34 @@ export class DefaultDialogEventHandler implements EventHandler {
       const se: SlotEvaluationResult = slotEvaluator.evaluate(lexEvent);
       //
       // if there's a slot evaluation hook, then invoke it
-      if (this.config.slotEvaluationHook) this.config.slotEvaluationHook(lexEvent, slotEvaluator, se);
-
+      if (this.config.slotEvaluationHook)
+        this.config.slotEvaluationHook(lexEvent, slotEvaluator, se);
+      
       //
       // ... if invalid, then return
       if (se.valid === SlotValidationAssessment.INVALID) {
         lexEvent.currentIntent.slots[slotName] = null;
         if (this.config.invalidSlotResponder)
           return Promise.resolve(this.config.invalidSlotResponder(lexEvent, slotEvaluator, se));
-
+        
         return Promise.resolve(this.defaultInvalidSlotResponder(lexEvent, slotEvaluator, se));
       }
     }
 
     //
     // if there's a hook, invoke it.
-    if (this.config.allSlotsValidHook) this.config.allSlotsValidHook(lexEvent);
+    if (this.config.allSlotsValidHook)
+      this.config.allSlotsValidHook(lexEvent);
 
     //
     // if all slots are valid, then delegate back to Lex ... which will send a Fulfillment Event.
-    if (this.config.allSlotsValidResponder) return Promise.resolve(this.config.allSlotsValidResponder(lexEvent));
-
+    if (this.config.allSlotsValidResponder)
+      return Promise.resolve(this.config.allSlotsValidResponder(lexEvent));
+    
     return Promise.resolve(this.defaultAllSlotsValidResponder(lexEvent));
-  }
+  
+  };
+
 
   protected getSlotEvaluator(slotName: string): SlotEvaluator {
     // look for a SlotEvaluator for slotName
@@ -260,7 +269,9 @@ export class DefaultDialogEventHandler implements EventHandler {
 
     return slotEvaluator;
   }
+
 }
+
 
 /**
  * The DefaultDialogEventHandler expects that each Slot has a SlotEvaluator instance mapped to it.
@@ -287,22 +298,24 @@ export interface SlotEvaluator {
   getSlotValue: (lexEvent: Ext.LexEvent) => EvaluatableSlotValue;
 }
 
+
 export enum SlotValidationAssessment {
   INVALID = 1,
   VALID_SLOT,
-  VALID_RECENT_SLOT,
+  VALID_RECENT_SLOT
 }
 
-export interface EvaluatableSlotValue {
+
+export interface EvaluatableSlotValue { 
   value: string;
   recentValue?: string;
-  details: { resolutions: LexSlotResolution[]; originalValue: string };
+  details: { resolutions: LexSlotResolution[]; originalValue: string; };
   elicitedSlotName?: string;
 }
 
 /**
  * The result of SlotEvaluator evaluation.
- *
+ * 
  */
 export class SlotEvaluationResult {
   //
@@ -321,6 +334,7 @@ export class SlotEvaluationResult {
     this.slotValue = s;
     if (n) this.newSlots = n;
   }
+
 }
 
 /**
@@ -346,16 +360,17 @@ export namespace StandardSlotEvaluators {
      * @param slotValue
      */
     public isValid(slotValue: EvaluatableSlotValue): SlotValidationAssessment {
+      
       //
       // assume a null slot value is always invalid
-      if (!slotValue.value) return SlotValidationAssessment.INVALID;
-
+      if (!(slotValue.value)) return SlotValidationAssessment.INVALID;
+      
       //
       // assume that if the recentIntentSummary view of the slot not null, then it has been previously validated.
       if (slotValue.recentValue != null) return SlotValidationAssessment.VALID_RECENT_SLOT;
 
       return SlotValidationAssessment.INVALID;
-    }
+    };
 
     /**
      * The default implementation uses the isValid function property to determine
@@ -373,11 +388,12 @@ export namespace StandardSlotEvaluators {
       const slotValue: EvaluatableSlotValue = this.getSlotValue(lexEvent);
       const va: SlotValidationAssessment = this.isValid(slotValue);
       return new SlotEvaluationResult(va, slotValue);
-    }
+    };
+
 
     /**
-     *
-     * @param lexEvent
+     * 
+     * @param lexEvent 
      */
     public getSlotValue(lexEvent: Ext.LexEvent): EvaluatableSlotValue {
       //
@@ -387,44 +403,52 @@ export namespace StandardSlotEvaluators {
       return {
         value: lexEvent.currentIntent.slots[this.slotName],
         details: lexEvent.currentIntent.slotDetails[this.slotName],
-        recentValue: recentIntentSummary ? recentIntentSummary.slots[this.slotName] : null,
-        elicitedSlotName: recentIntentSummary ? recentIntentSummary.slotToElicit : null,
+        recentValue: (recentIntentSummary ? recentIntentSummary.slots[this.slotName] : null),
+        elicitedSlotName: (recentIntentSummary ? recentIntentSummary.slotToElicit : null)
       };
-    }
+
+    };
+
 
     /**
      * Find the most recentIntentSummaryView for the current Intent.  If none found, return null.
-     *
-     * @param lexEvent
+     * 
+     * @param lexEvent 
      */
     protected getRecentIntentSummary(lexEvent: Ext.LexEvent): IntentSummary {
-      if (!lexEvent.recentIntentSummaryView) {
+
+      if (!(lexEvent.recentIntentSummaryView)) {
         return null;
       }
 
       for (const is of lexEvent.recentIntentSummaryView) {
-        if (is.intentName === lexEvent.currentIntent.name) {
-          return is;
-        }
+          if (is.intentName === lexEvent.currentIntent.name) {
+            return is;
+          }
       }
 
       return null;
+
     }
+
   }
 
   /**
    * Ensure that Slot value is not null.  Simple.
    */
   export class NotNullSlotEvaluator extends BaseSlotEvaluator {
+
     public isValid(param: EvaluatableSlotValue): SlotValidationAssessment {
       const sva: SlotValidationAssessment = super.isValid(param);
       if (sva === SlotValidationAssessment.INVALID) {
-        return param.value ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID;
+        return (param.value ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID);
       }
       return sva;
     }
+
   }
 
+  
   /**
    * Ensure that whatever value was specified exists as is within a Set
    * provided to the constructor.
@@ -441,43 +465,51 @@ export namespace StandardSlotEvaluators {
     public isValid(param: EvaluatableSlotValue): SlotValidationAssessment {
       const sva: SlotValidationAssessment = super.isValid(param);
       if (sva === SlotValidationAssessment.INVALID) {
-        return this.set.has(param.value) ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID;
+        return (this.set.has(param.value) ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID);
       }
       return sva;
     }
+
   }
+
 
   /**
    * Ensure that a LexDate is valid.  Depending on Slot Type defined within the Lex
    * Intent, this maybe redundant.
    */
   export class LexDateSlotEvaluator extends BaseSlotEvaluator {
+
     public isValid(param: EvaluatableSlotValue): SlotValidationAssessment {
       const sva: SlotValidationAssessment = super.isValid(param);
       if (sva === SlotValidationAssessment.INVALID) {
-        return Util.isValidLexDate(param.value)
-          ? SlotValidationAssessment.VALID_SLOT
-          : SlotValidationAssessment.INVALID;
+        return (Util.isValidLexDate(param.value) ? SlotValidationAssessment.VALID_SLOT 
+        : SlotValidationAssessment.INVALID);
       }
       return sva;
     }
+
   }
+
 
   /**
    * Ensure that a currency value is valid.  Depending on Slot Type defined within the Lex
    * Intent, this maybe redundant.
    */
   export class CurrencySlotEvaluator extends BaseSlotEvaluator {
+    
     public isValid(param: EvaluatableSlotValue): SlotValidationAssessment {
       const sva: SlotValidationAssessment = super.isValid(param);
       if (sva === SlotValidationAssessment.INVALID) {
         const re: RegExp = new RegExp('^[1-9]?[0-9]*[.][0-9]{2}');
-        return re.test(param.value) ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID;
+        return (re.test(param.value) ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID);
       }
       return sva;
     }
   }
+
+
 }
+
 
 export class Util {
   /**
@@ -486,8 +518,8 @@ export class Util {
    * @param dateString
    */
   public static isValidLexDate = (dateString: string): boolean => {
-    if (!dateString) return false;
-
+    if (!(dateString)) return false;
+    
     const posn = dateString.lastIndexOf('-');
     if (posn < 0) {
       return false;
@@ -501,6 +533,8 @@ export class Util {
     return isValidDate;
   };
 }
+
+
 
 export class LexResultFactory {
   public static dialogActionClose = (param: {
@@ -589,5 +623,5 @@ export class LexResultFactory {
   }): void => {
     if (param.sessionAttributes) param.lexResult.sessionAttributes = param.sessionAttributes;
     if (param.recentIntentSummaryView) param.lexResult.recentIntentSummaryView = param.recentIntentSummaryView;
-  };
+  }
 }
