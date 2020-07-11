@@ -1,6 +1,6 @@
 {
   "name": "order-flowers-bot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,6 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "aws-lambda": "^1.0.6",
-    "lex-hook": "file:../../lex-hook-0.0.1.tgz"
+    "aws-lambda": "^1.0.6"
   }
 }
