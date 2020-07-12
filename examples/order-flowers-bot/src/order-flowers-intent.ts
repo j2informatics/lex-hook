@@ -41,13 +41,14 @@ class FulfillmentEventHandler implements EventHandler {
  * @param slotEvaluator 
  * @param slotEvalResult 
  */
-const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator, slotEvalResult: SlotEvaluationResult): void => {
+const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator, 
+    slotEvalResult: SlotEvaluationResult): void => {
 
     if (slotEvalResult.valid != SlotValidationAssessment.VALID_SLOT)
         return;
 
     if (slotEvaluator.slotName === 'FlowerType') {
-        let price: Number = 2;
+        let price = 2;
         if (slotEvalResult.slotValue.value === 'roses') {
             price = 3;
         }
@@ -60,11 +61,17 @@ const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator,
 const config: DialogEventHandlerConfig = {
     slotEvaluatorArray: [
         // Custom Slot Type (Expand Values)
-        new StandardSlotEvaluators.SetMembershipSlotEvaluator('FlowerType', 'What type of flowers would you like to order?', new Set<string>(VALID_FLOWER_TYPES)),
+        new StandardSlotEvaluators.SetMembershipSlotEvaluator(
+            'FlowerType', 'What type of flowers would you like to order?', 
+            new Set<string>(VALID_FLOWER_TYPES)),
         // AMAZON.DATE
-        new StandardSlotEvaluators.LexDateSlotEvaluator('PickupDate', 'What day do you want the Flowers to be picked up?'),
+        new StandardSlotEvaluators.LexDateSlotEvaluator(
+            'PickupDate', 
+            'What day do you want the Flowers to be picked up?'),
         // AMAZON.TIME
-        new StandardSlotEvaluators.NotNullSlotEvaluator('PickupTime', 'At what time do you want the Flowers to be picked up?')
+        new StandardSlotEvaluators.NotNullSlotEvaluator(
+            'PickupTime', 
+            'At what time do you want the Flowers to be picked up?')
     ],
     slotEvaluationHook: slotEvalFunction
     

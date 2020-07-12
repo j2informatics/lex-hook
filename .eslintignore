@@ -1,0 +1,4 @@
+node_modules
+lib
+examples/order-flowers-bot/node_modules
+examples/order-flowers-bot/lib

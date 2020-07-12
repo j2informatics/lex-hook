@@ -6,10 +6,19 @@ import {
     route, 
     LexResultFactory } from '../src/index';
 
+/**
+ * Create a handler to handle LexEvent messages
+ */
 const lexEventHandler: LexEventHandler = {
 
+    /**
+     * No need for any dialog
+     */
     dialog: null,
 
+    /**
+     * Simplest fulfillment handler possible
+     */
     fulfill: {
         handle: (lexEvent: Ext.LexEvent): Promise<Ext.LexResult> => {
             return Promise.resolve(LexResultFactory.dialogActionClose({
@@ -48,11 +57,13 @@ test('test case 1', async () => {
         messageVersion: '1.0',
         sessionAttributes: {},
         requestAttributes: null,
-        recentIntentSummaryView: null
+        recentIntentSummaryView: null,
+        sentimentResponse: null,
+        kendraResponse: null
     };
 
     const r: Ext.LexResult = await route(<Ext.LexEvent>testLexEvent, null, lexEventHandler);
     expect(r.dialogAction.type).toBe('Close');
-    expect((<LexDialogActionClose>r.dialogAction).fulfillmentState).toBe('Fulfilled');   
+    expect((r.dialogAction as LexDialogActionClose).fulfillmentState).toBe('Fulfilled');   
     
 });

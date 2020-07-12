@@ -67,8 +67,16 @@ export namespace Ext {
    */
   export interface LexEvent extends AWSLexEvent {
     recentIntentSummaryView: IntentSummary[];
-    sentimentResponse: any;
-    kendraResponse: any
+    sentimentResponse: { 
+      SentimentScore: { 
+        Mixed: number,
+        Positive: number,
+        Neutral: number,
+        Negative: number
+      },
+      SentimentLabel: string 
+    };
+    kendraResponse: string;
   }
   
   /**
@@ -174,9 +182,9 @@ export interface DialogEventHandlerConfig {
  */
 export interface SlotEvaluator {
   /**
-  * If the evaluate function determines the Slot value is invalid, this message will be included
-  * in the default ElicitSlot LexResult.
-  */
+   * If the evaluate function determines the Slot value is invalid, this message will be included
+   * in the default ElicitSlot LexResult.
+   */
   promptMessage: string;
   /**
    * The Slot name with which this evaluator is associated
@@ -361,7 +369,7 @@ export class DefaultDialogEventHandler implements EventHandler {
     
     return Promise.resolve(this.defaultAllSlotsValidResponder(lexEvent));
   
-  };
+  }
 
 
   /**
@@ -429,16 +437,16 @@ export namespace StandardSlotEvaluators {
       const slotValue: EvaluatableSlotValue = this.getSlotValue(lexEvent);
       const va: SlotValidationAssessment = this.isValid(slotValue);
       return new SlotEvaluationResult(va, slotValue);
-    };
+    }
 
 
      /**
-     * Returns VALID_RECENT_SLOT if the recentIntentSummaryView contains a non-null value
-     * for the slot.  Otherwise, returns INVALID.  Therefore, sub-classes must further define
-     * what constitutes VALID for themselves.
-     * 
-     * @param slotValue
-     */
+      * Returns VALID_RECENT_SLOT if the recentIntentSummaryView contains a non-null value
+      * for the slot.  Otherwise, returns INVALID.  Therefore, sub-classes must further define
+      * what constitutes VALID for themselves.
+      * 
+      * @param slotValue
+      */
     public isValid(slotValue: EvaluatableSlotValue): SlotValidationAssessment {
 
       /**
@@ -448,7 +456,7 @@ export namespace StandardSlotEvaluators {
       
       return SlotValidationAssessment.INVALID;
 
-    };
+    }
 
     
     /**
@@ -467,7 +475,7 @@ export namespace StandardSlotEvaluators {
         elicitedSlotName: (recentIntentSummary ? recentIntentSummary.slotToElicit : null)
       };
 
-    };
+    }
 
 
     /**
@@ -583,7 +591,7 @@ export namespace StandardSlotEvaluators {
     public isValid(slotValue: EvaluatableSlotValue): SlotValidationAssessment {
       const sva: SlotValidationAssessment = super.isValid(slotValue);
       if (sva === SlotValidationAssessment.INVALID) {
-        const re: RegExp = new RegExp('^[1-9]?[0-9]*[.][0-9]{2}');
+        const re = new RegExp('^[1-9]?[0-9]*[.][0-9]{2}');
         return (re.test(slotValue.value) ? SlotValidationAssessment.VALID_SLOT : SlotValidationAssessment.INVALID);
       }
       return sva;

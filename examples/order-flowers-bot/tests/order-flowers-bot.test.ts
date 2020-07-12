@@ -4,12 +4,14 @@ import { handler } from '../src/index';
 
 
 //
-// almost like i need a Lex Simulator!  Send messages to it.  It sends messages to Lambda function I want to test.  I need to be able to ensure that the 
+// almost like i need a Lex Simulator!  Send messages to it.  It sends messages to Lambda function I
+// want to test.  I need to be able to ensure that the 
 // Lex Simulator gets back what I expect from the lambda function.
 
 //
-// define LexEvent in it's initial state, i.e. what is sent to Dialog Code Hook when user enters an Intent assocated with their utterance.
-let testLexEvent: Ext.LexEvent = {
+// define LexEvent in it's initial state, i.e. what is sent to Dialog Code Hook when 
+// user enters an Intent assocated with their utterance.
+const testLexEvent: Ext.LexEvent = {
     currentIntent: {
         name: 'OrderFlowers',
         slots: {
@@ -45,7 +47,9 @@ let testLexEvent: Ext.LexEvent = {
     messageVersion: '1.0',
     sessionAttributes: {},
     requestAttributes: null,
-    recentIntentSummaryView: null
+    recentIntentSummaryView: null,
+    sentimentResponse: null,
+    kendraResponse: null
 };
 
 
