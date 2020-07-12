@@ -62,7 +62,8 @@ const config: DialogEventHandlerConfig = {
     slotEvaluatorArray: [
         // Custom Slot Type (Expand Values)
         new StandardSlotEvaluators.SetMembershipSlotEvaluator(
-            'FlowerType', 'What type of flowers would you like to order?', 
+            'FlowerType', 
+            'What type of flowers would you like to order?', 
             new Set<string>(VALID_FLOWER_TYPES)),
         // AMAZON.DATE
         new StandardSlotEvaluators.LexDateSlotEvaluator(
