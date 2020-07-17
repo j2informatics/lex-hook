@@ -62,6 +62,10 @@ test('test case 1', async () => {
         kendraResponse: null
     };
 
+    /**
+     * invoke the library's route function, and get a LexResult.  Ensure the LexResult instance has the 
+     * expected state.
+     */
     const r: Ext.LexResult = await route(<Ext.LexEvent>testLexEvent, null, lexEventHandler);
     expect(r.dialogAction.type).toBe('Close');
     expect((r.dialogAction as LexDialogActionClose).fulfillmentState).toBe('Fulfilled');   

@@ -47,6 +47,9 @@ const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator,
     if (slotEvalResult.valid != SlotValidationAssessment.VALID_SLOT)
         return;
 
+    /**
+     * Set the price of flowers as a function of type
+     */
     if (slotEvaluator.slotName === 'FlowerType') {
         let price = 2;
         if (slotEvalResult.slotValue.value === 'roses') {
@@ -60,33 +63,39 @@ const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator,
 
 const config: DialogEventHandlerConfig = {
     slotEvaluatorArray: [
-        // Custom Slot Type (Expand Values)
+        /**
+         * Custom Slot Type (Expand Values) in Lex. 
+         */
         new StandardSlotEvaluators.SetMembershipSlotEvaluator(
             'FlowerType', 
             'What type of flowers would you like to order?', 
             new Set<string>(VALID_FLOWER_TYPES)),
-        // AMAZON.DATE
+        /** 
+         * AMAZON.DATE
+         * 
+         * This is redundant given that Lex will ensure user-entered dates are valid.
+         */
         new StandardSlotEvaluators.LexDateSlotEvaluator(
             'PickupDate', 
             'What day do you want the Flowers to be picked up?'),
-        // AMAZON.TIME
+        /** 
+         * AMAZON.TIME
+         */
         new StandardSlotEvaluators.NotNullSlotEvaluator(
             'PickupTime', 
             'At what time do you want the Flowers to be picked up?')
     ],
+    /**
+     * this the specified function is invoked each time a Slot value is evaluated.
+     */
     slotEvaluationHook: slotEvalFunction
     
 }
 
 
 export const eventHandler: LexEventHandler = {
-
-    //
-    // specify these in same order slots should be elicited!
-    //
     dialog: new DefaultDialogEventHandler(config),
     fulfill: new FulfillmentEventHandler()
-
 }
 
 

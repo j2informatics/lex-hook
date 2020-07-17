@@ -2,9 +2,10 @@ import { LexDialogActionClose, LexDialogActionElicitSlot } from 'aws-lambda';
 import { Ext, IntentSummary } from 'lex-hook';
 import { handler } from '../src/index';
 
-//
-// define LexEvent in it's initial state, i.e. what is sent to Dialog Code Hook when 
-// user enters an Intent assocated with their utterance.
+/**
+ * Define LexEvent in it's initial state, i.e. what is sent to Dialog Code Hook when 
+ * user enters an Intent assocated with their utterance.
+ */
 const testLexEvent: Ext.LexEvent = {
     currentIntent: {
         name: 'OrderFlowers',
@@ -55,12 +56,11 @@ describe('order flowers suite', () => {
                 
         const result = await handler(<Ext.LexEvent>testLexEvent, null);
                 
-        //
-        // ensure elicit slot
         expect(result.dialogAction.type).toBe('ElicitSlot');
 
-        //
-        // ensure the right slot is elicited first
+        /**
+         * ensure the right slot is elicited first
+         */
         expect((<LexDialogActionElicitSlot>result.dialogAction).slotToElicit).toBe('FlowerType');
 
         const resultSlots = (<LexDialogActionElicitSlot>result.dialogAction).slots;
@@ -100,8 +100,6 @@ describe('order flowers suite', () => {
         const result = await handler(<Ext.LexEvent>testLexEvent, null);
         expect(result.sessionAttributes['price'] === '2.00');
 
-        //
-        // after submitting roses as FlowerType, expect PickupDate will be next Elicited slot
         expect(result.dialogAction.type).toBe('ElicitSlot');
         expect((<LexDialogActionElicitSlot>result.dialogAction).slotToElicit).toBe('PickupDate');
         const resultSlots = (<LexDialogActionElicitSlot>result.dialogAction).slots;
