@@ -3,22 +3,6 @@ import {
     LexHookDialog as lxd 
 } from 'lex-hook';
 
-// import { 
-//     LexEvent,
-//     LexResult,
-//     LexEventHandler,
-//     DefaultDialogEventHandler, 
-//     EventHandler,
-//     LexResultFactory,
-//     SlotEvaluationResult,
-//     SlotValidationAssessment,
-//     DialogEventHandlerConfig,
-//     SlotEvaluator,
-//     SetMembershipSlotEvaluator,
-//     LexDateSlotEvaluator,
-//     NotNullSlotEvaluator
-// } from 'lex-hook';
-
 const VALID_FLOWER_TYPES_ARRAY = [
     'roses',
     'tulips',
