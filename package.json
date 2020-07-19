@@ -1,6 +1,6 @@
 {
   "name": "lex-hook",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library to help you create AWS Lambda Lex Code-Hook functions",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
