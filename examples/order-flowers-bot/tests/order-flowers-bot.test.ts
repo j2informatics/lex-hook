@@ -1,12 +1,12 @@
 import { LexDialogActionClose, LexDialogActionElicitSlot } from 'aws-lambda';
-import { Ext, IntentSummary } from 'lex-hook';
+import { LexHook as lx } from 'lex-hook';
 import { handler } from '../src/index';
 
 /**
- * Define LexEvent in it's initial state, i.e. what is sent to Dialog Code Hook when 
+ * Define LexEvent in its initial state, i.e. what is sent to Dialog Code Hook when 
  * user enters an Intent assocated with their utterance.
  */
-const testLexEvent: Ext.LexEvent = {
+const testLexEvent: lx.LexEvent = {
     currentIntent: {
         name: 'OrderFlowers',
         slots: {
@@ -54,7 +54,7 @@ describe('order flowers suite', () => {
 
         console.log('initialize............................................................');
                 
-        const result = await handler(<Ext.LexEvent>testLexEvent, null);
+        const result = await handler(<lx.LexEvent>testLexEvent, null);
                 
         expect(result.dialogAction.type).toBe('ElicitSlot');
 
@@ -81,7 +81,7 @@ describe('order flowers suite', () => {
         testLexEvent.currentIntent.slotDetails.FlowerType.originalValue = flowerType;
         testLexEvent.currentIntent.slots.FlowerType = flowerType;
 
-        const intentSummary: IntentSummary = {
+        const intentSummary: lx.IntentSummary = {
             intentName: testLexEvent.currentIntent.name,
             checkpointLabel: null,
             slots:{
@@ -97,7 +97,7 @@ describe('order flowers suite', () => {
 
         testLexEvent.recentIntentSummaryView = [ intentSummary ];
 
-        const result = await handler(<Ext.LexEvent>testLexEvent, null);
+        const result = await handler(<lx.LexEvent>testLexEvent, null);
         expect(result.sessionAttributes['price'] === '2.00');
 
         expect(result.dialogAction.type).toBe('ElicitSlot');
@@ -118,7 +118,7 @@ describe('order flowers suite', () => {
         testLexEvent.currentIntent.slotDetails.PickupDate.originalValue = pickUpDate;
         testLexEvent.currentIntent.slots.PickupDate = pickUpDate;
 
-        const intentSummary: IntentSummary = {
+        const intentSummary: lx.IntentSummary = {
             intentName: testLexEvent.currentIntent.name,
             checkpointLabel: null,
             slots:{
@@ -134,7 +134,7 @@ describe('order flowers suite', () => {
 
         testLexEvent.recentIntentSummaryView = [ intentSummary ];
 
-        const result = await handler(<Ext.LexEvent>testLexEvent, null);
+        const result = await handler(<lx.LexEvent>testLexEvent, null);
         
         expect(result.dialogAction.type).toBe('ElicitSlot');
         expect((<LexDialogActionElicitSlot>result.dialogAction).slotToElicit).toBe('PickupTime');
@@ -153,7 +153,7 @@ describe('order flowers suite', () => {
         testLexEvent.currentIntent.slotDetails.PickupTime.originalValue = pickUpTime;
         testLexEvent.currentIntent.slots.PickupTime = pickUpTime;
 
-        const intentSummary: IntentSummary = {
+        const intentSummary: lx.IntentSummary = {
             intentName: testLexEvent.currentIntent.name,
             checkpointLabel: null,
             slots:{
@@ -169,7 +169,7 @@ describe('order flowers suite', () => {
 
         testLexEvent.recentIntentSummaryView = [ intentSummary ];
         
-        const result = await handler(<Ext.LexEvent>testLexEvent, null);
+        const result = await handler(<lx.LexEvent>testLexEvent, null);
         
         expect(result.dialogAction.type).toBe('Delegate');
 
@@ -184,7 +184,7 @@ describe('order flowers suite', () => {
     test('notify confirm fulfillment', async () => {
         console.log('notifying confirm fulfillment.............................................................');
         
-        const intentSummary: IntentSummary = {
+        const intentSummary: lx.IntentSummary = {
             intentName: testLexEvent.currentIntent.name,
             checkpointLabel: null,
             slots:{
@@ -199,7 +199,7 @@ describe('order flowers suite', () => {
         };
         testLexEvent.recentIntentSummaryView = [ intentSummary ];
 
-        const result = await handler(<Ext.LexEvent>testLexEvent, null);
+        const result = await handler(<lx.LexEvent>testLexEvent, null);
 
         expect(result.dialogAction.type).toBe('Delegate');
 
@@ -214,7 +214,7 @@ describe('order flowers suite', () => {
         testLexEvent.inputTranscript = 'yes';
         testLexEvent.recentIntentSummaryView = null;
 
-        const result = await handler(<Ext.LexEvent>testLexEvent, null);
+        const result = await handler(<lx.LexEvent>testLexEvent, null);
 
         expect(result.dialogAction.type).toBe('Close');
         expect((<LexDialogActionClose>result.dialogAction).fulfillmentState).toBe('Fulfilled');

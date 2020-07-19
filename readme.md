@@ -89,11 +89,9 @@ a hook that is invoked each time a Slot value is evaluated.  Finally, see <code>
 
 1) Logging framework.
 
-2) Separate <code>./src/index.ts</code> into multiple modules.
+2) Hook-functions should return Promises, and be invoked asynchronously.
 
-3) Hook-functions should return Promises, and be invoked asynchronously.
-
-4) Enable route function to handle multiple Intents.
+3) Enable route function to handle multiple Intents.
 
 
 ## informational references

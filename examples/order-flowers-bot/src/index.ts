@@ -1,5 +1,5 @@
 import { Context } from 'aws-lambda';
-import { route, Ext } from 'lex-hook';
+import { LexHook as lx } from 'lex-hook';
 
 /**
  * The LexEventHandler is defined within this module.
@@ -12,6 +12,6 @@ import * as intent from './order-flowers-intent';
  * @param lexEvent
  * @param ctx 
  */
-export async function handler(lexEvent: Ext.LexEvent, ctx: Context): Promise<Ext.LexResult> {
-    return route(<Ext.LexEvent>lexEvent, ctx, intent.eventHandler);
+export async function handler(lexEvent: lx.LexEvent, ctx: Context): Promise<lx.LexResult> {
+    return lx.route(<lx.LexEvent>lexEvent, ctx, intent.eventHandler);
 }

@@ -1,15 +1,23 @@
 import { 
-    LexEventHandler,
-    DefaultDialogEventHandler, 
-    StandardSlotEvaluators,
-    EventHandler,
-    LexResultFactory,
-    Ext,
-    SlotEvaluationResult,
-    SlotValidationAssessment,
-    DialogEventHandlerConfig,
-    SlotEvaluator
+    LexHook as lx,
+    LexHookDialog as lxd 
 } from 'lex-hook';
+
+// import { 
+//     LexEvent,
+//     LexResult,
+//     LexEventHandler,
+//     DefaultDialogEventHandler, 
+//     EventHandler,
+//     LexResultFactory,
+//     SlotEvaluationResult,
+//     SlotValidationAssessment,
+//     DialogEventHandlerConfig,
+//     SlotEvaluator,
+//     SetMembershipSlotEvaluator,
+//     LexDateSlotEvaluator,
+//     NotNullSlotEvaluator
+// } from 'lex-hook';
 
 const VALID_FLOWER_TYPES_ARRAY = [
     'roses',
@@ -18,11 +26,11 @@ const VALID_FLOWER_TYPES_ARRAY = [
 ]
 const VALID_FLOWER_TYPES: Set<string> = new Set(VALID_FLOWER_TYPES_ARRAY);
 
-class FulfillmentEventHandler implements EventHandler {
+class FulfillmentEventHandler implements lx.EventHandler {
         
-    public handle = (lexEvent: Ext.LexEvent): Promise<Ext.LexResult> => {
+    public handle = (lexEvent: lx.LexEvent): Promise<lx.LexResult> => {
 
-        return Promise.resolve(LexResultFactory.dialogActionClose({
+        return Promise.resolve(lx.LexResultFactory.dialogActionClose({
             fulfillmentState: 'Fulfilled',
             message: {
                 contentType: 'PlainText',
@@ -41,10 +49,10 @@ class FulfillmentEventHandler implements EventHandler {
  * @param slotEvaluator 
  * @param slotEvalResult 
  */
-const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator, 
-    slotEvalResult: SlotEvaluationResult): void => {
+const slotEvalFunction  = (lexEvent: lx.LexEvent, slotEvaluator: lxd.SlotEvaluator, 
+    slotEvalResult: lxd.SlotEvaluationResult): void => {
 
-    if (slotEvalResult.valid != SlotValidationAssessment.VALID_SLOT)
+    if (slotEvalResult.valid != lxd.SlotValidationAssessment.VALID_SLOT)
         return;
 
     /**
@@ -61,12 +69,12 @@ const slotEvalFunction  = (lexEvent: Ext.LexEvent, slotEvaluator: SlotEvaluator,
 }
 
 
-const config: DialogEventHandlerConfig = {
+const config: lxd.DialogEventHandlerConfig = {
     slotEvaluatorArray: [
         /**
          * Custom Slot Type (Expand Values) in Lex. 
          */
-        new StandardSlotEvaluators.SetMembershipSlotEvaluator(
+        new lxd.SetMembershipSlotEvaluator(
             'FlowerType', 
             'What type of flowers would you like to order?', 
             new Set<string>(VALID_FLOWER_TYPES)),
@@ -75,13 +83,13 @@ const config: DialogEventHandlerConfig = {
          * 
          * This is redundant given that Lex will ensure user-entered dates are valid.
          */
-        new StandardSlotEvaluators.LexDateSlotEvaluator(
+        new lxd.LexDateSlotEvaluator(
             'PickupDate', 
             'What day do you want the Flowers to be picked up?'),
         /** 
          * AMAZON.TIME
          */
-        new StandardSlotEvaluators.NotNullSlotEvaluator(
+        new lxd.NotNullSlotEvaluator(
             'PickupTime', 
             'At what time do you want the Flowers to be picked up?')
     ],
@@ -93,8 +101,8 @@ const config: DialogEventHandlerConfig = {
 }
 
 
-export const eventHandler: LexEventHandler = {
-    dialog: new DefaultDialogEventHandler(config),
+export const eventHandler: lx.LexEventHandler = {
+    dialog: new lxd.DefaultDialogEventHandler(config),
     fulfill: new FulfillmentEventHandler()
 }
 
