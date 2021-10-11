@@ -1,5 +1,5 @@
 import { LexDialogActionClose, LexDialogActionElicitSlot } from 'aws-lambda';
-import { LexHook as lx } from 'lex-hook';
+import { LexHook as lx } from '../../../src/index';
 import { handler } from '../src/index';
 
 /**

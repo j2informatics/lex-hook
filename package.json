@@ -22,8 +22,8 @@
   "author": "j2informatics",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/j2informatics/lex-hook.git"
+    "type": "git",
+    "url": "https://github.com/j2informatics/lex-hook.git"
   },
   "files": [
     "lib/**/*"

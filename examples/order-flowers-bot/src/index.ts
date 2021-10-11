@@ -1,5 +1,5 @@
 import { Context } from 'aws-lambda';
-import { LexHook as lx } from 'lex-hook';
+import { LexHook as lx } from '../../../src/index';
 
 /**
  * The LexEventHandler is defined within this module.
