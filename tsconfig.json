@@ -10,10 +10,10 @@
         "declaration": true
     },
     "include": [
-        "src"
+        "src",
+        "tests"
     ],
     "exclude": [
-        "node_modules", 
-        "test*"
+        "node_modules"
     ]
 }

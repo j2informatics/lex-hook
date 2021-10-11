@@ -8,7 +8,7 @@ import {
 /**
  * Create a handler to handle LexEvent messages
  */
-const lexEventHandler: lx.LexEventHandler = {
+const lexEventHandler:lx.LexEventHandler = {
 
     dialog: new lxd.DefaultDialogEventHandler({
         slotEvaluatorArray: [
@@ -18,11 +18,11 @@ const lexEventHandler: lx.LexEventHandler = {
         ],
     }),
 
-    /**
+    /**cl
      * Simplest fulfillment handler possible
      */
     fulfill: {
-        handle: (lexEvent: lx.LexEvent): Promise<lx.LexResult> => {
+        handle: (): Promise<lx.LexResult> => {
             return Promise.resolve(lx.LexResultFactory.dialogActionClose({
                 fulfillmentState: 'Fulfilled'
             }));
