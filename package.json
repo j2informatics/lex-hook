@@ -11,7 +11,9 @@
   ],
   "jest": {
     "verbose": true,
-    "testMatch": ["**/tests/lex-hook.test.ts"],
+    "testMatch": [
+      "**/tests/lex-hook.test.ts"
+    ],
     "moduleFileExtensions": [
       "ts",
       "js"
